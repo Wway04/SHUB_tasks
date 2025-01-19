@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <h1>Filter Excel Data Based on Sales (> 50.000)</h1>
+  <a id="downloadLink" style="display:none;">Download Filtered File</a>
+  <script>
+    async function getData() {
+      try {
+        const url = "https://go.microsoft.com/fwlink/?LinkID=521962";
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();  
+        const workbook = XLSX.read(arrayBuffer, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        console.log(workbook.Sheets);
+        const worksheet = workbook.Sheets[sheetName];
+        // console.log(worksheet);
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        const filteredData = jsonData.filter(row => {       
+          return row["  Sales "] && row["  Sales "] > 50000;
+        });
+        const newSheet = XLSX.utils.json_to_sheet(filteredData);
+        const newWorkbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(newWorkbook, newSheet, "FilteredData");
+        const fileBuffer = XLSX.write(newWorkbook, { bookType: "xlsx", type: "array" });
+        const blob = new Blob([fileBuffer], { type: "application/octet-stream" });
+        const link = document.getElementById("downloadLink");
+        link.href = URL.createObjectURL(blob);
+        link.download = "FilteredData.xlsx";
+        link.style.display = "inline";
+        link.textContent = "Download Filtered File";
+      } catch (error) {
+        console.error("Error fetching or processing the file:", error);
+      }
+    }
+    getData();
+  </script>
+</body>
+
+</html>

@@ -51,8 +51,8 @@
             let totalOdd = 0;
             let totalEven = 0;
             for (i = item?.range[0]; i <= item?.range[1]; i++) {
-              if (i % 2 === 0) totalOdd += data[i];
-              else totalEven += data[i];
+              if (i % 2 === 0) totalEven += data[i];
+              else totalOdd += data[i];
             }
             total = totalEven - totalOdd;
           }
